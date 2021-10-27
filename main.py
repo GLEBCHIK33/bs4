@@ -42,7 +42,7 @@ def Natan(text):
     return words
 
 
-pages = 1
+pages = 4
 d = defaultdict(list)
 params = {'page': 1}
 url = 'https://career.habr.com/vacancies?type=all'
