@@ -42,11 +42,12 @@ def Natan(text):
     return words
 
 
-pages = 4
+pages = 1
 d = defaultdict(list)
 params = {'page': 1}
 url = 'https://career.habr.com/vacancies?type=all'
 links = []
+data_descriptions = defaultdict(list)
 while params['page'] <= pages:
     req = requests.get(url, params=params)
     src = req.text
@@ -65,9 +66,13 @@ while params['page'] <= pages:
         for i in soupp.find_all("div", "job_show_description__body"):
             if Natan(preprocess(i.text)) not in d[link]:
                 d[link].append(Natan(preprocess(i.text)))
+            if i.text not in data_descriptions[link]:
+                data_descriptions[link].append(i.text)
 
     with open('all_vacancies_dict.json', 'w', encoding='utf8') as file:
         json.dump(d, file, indent=4, ensure_ascii=False)
+    with open('data_descriptions.json', 'w', encoding='utf8') as file1:
+        json.dump(data_descriptions, file1, indent=4, ensure_ascii=False)
     params['page'] += 1
 need = input()
 enter = Natan(preprocess(need))
@@ -79,4 +84,7 @@ for k, v in d.items():
     if len(keys.intersection(enter)) >= len(enter) * 0.5:
         if len(ll) < 5:
             ll.append(k)
-print(*ll, sep='\n')
+if ll:
+    print(*ll, sep='\n')
+else:
+    print('Не найдено похожх ваканский. Детализируйте запрос и попробуйте еще раз')
